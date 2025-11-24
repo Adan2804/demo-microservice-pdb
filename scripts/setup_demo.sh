@@ -91,3 +91,5 @@ fi
 echo "--------------------------------------------------"
 echo "Background PIDs: ArgoCD=$ARGOCD_PID App=$MICRO_PID"
 echo "To stop port-forwards run: pkill -f 'kubectl port-forward'"
+
+kubectl apply -f ./argocd/application.yaml -n argocd
