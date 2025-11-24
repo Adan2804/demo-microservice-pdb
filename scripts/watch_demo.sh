@@ -26,21 +26,16 @@ echo "2. En otra terminal, ejecuta el cambio de imagen (o usa ArgoCD):"
 echo -e "   ${GREEN}git commit ... && git push${NC}"
 echo "3. Observa cómo el PDB asegura que siempre haya pods disponibles."
 echo ""
-echo -e "${YELLOW}Obteniendo URL del servicio...${NC}"
-
-# Intentar obtener URL (puede fallar en WSL/Docker driver si no hay tunnel)
-AUTO_URL=$(minikube service demo-pdb-service --url 2>/dev/null | grep "http" | head -n 1)
-
-if [ -n "$AUTO_URL" ]; then
-    SERVICE_URL="$AUTO_URL"
-    echo -e "${GREEN}Servicio detectado en: $SERVICE_URL${NC}"
-else
-    echo -e "${RED}No se pudo obtener la URL automáticamente (común en WSL/Docker).${NC}"
-    echo -e "${YELLOW}Por favor, ejecuta en otra terminal:${NC}"
-    echo -e "   ${GREEN}minikube service demo-pdb-service --url${NC}"
-    echo -e "${YELLOW}Y pega la URL aquí (ej: http://127.0.0.1:39635):${NC}"
-    read -p "> " SERVICE_URL
-fi
+echo -e "${YELLOW}Configuración de URL del Servicio${NC}"
+echo "----------------------------------------------------------------"
+echo -e "${CYAN}NOTA IMPORTANTE:${NC} En tu entorno (WSL/Docker), 'minikube service' debe correr en una terminal separada."
+echo ""
+echo "1. Abre una NUEVA terminal."
+echo "2. Ejecuta: ${GREEN}minikube service demo-pdb-service --url${NC}"
+echo "3. Copia la URL que aparece (ej: http://127.0.0.1:xxxxx)."
+echo "4. Pégala aquí abajo."
+echo "----------------------------------------------------------------"
+read -p "URL del servicio: " SERVICE_URL
 
 # Validar que tengamos algo
 if [ -z "$SERVICE_URL" ]; then
@@ -229,8 +224,15 @@ READY:.status.readyReplicas \
     echo ""
     echo -e "${YELLOW}PRUEBA DE CONECTIVIDAD API:${NC}"
 
+    # Construir API_URL inteligentemente
+    if [[ "$SERVICE_URL" == *"/public/hello"* ]]; then
+        API_URL="$SERVICE_URL"
+    else
+        # Asegurar que no haya doble slash si el usuario puso slash al final
+        SERVICE_URL=${SERVICE_URL%/}
+        API_URL="$SERVICE_URL/public/hello"
+    fi
     
-    API_URL="$SERVICE_URL/public/hello"
     API_RESPONSE=$(curl -s -w "\n%{http_code}" --connect-timeout 2 --max-time 3 "$API_URL" 2>/dev/null)
     HTTP_CODE=$(echo "$API_RESPONSE" | tail -n1)
     API_BODY=$(echo "$API_RESPONSE" | sed '$d')
