@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: demo-pdb-container
-          image: demo-pdb:latest
+          image: demo-pdb:v1
           imagePullPolicy: Never
           ports:
             - containerPort: 8080
