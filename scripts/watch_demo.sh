@@ -1,4 +1,4 @@
-#!/b#!/bin/bash
+#!/bin/bash
 
 # Script para monitorear en tiempo real el rolling update con MÁXIMO DETALLE
 # Muestra cada cambio de estado de los pods
@@ -27,12 +27,25 @@ echo -e "   ${GREEN}git commit ... && git push${NC}"
 echo "3. Observa cómo el PDB asegura que siempre haya pods disponibles."
 echo ""
 echo -e "${YELLOW}Obteniendo URL del servicio...${NC}"
-SERVICE_URL=$(minikube service demo-pdb-service --url | head -n 1)
-if [ -z "$SERVICE_URL" ]; then
-    echo -e "${RED}No se pudo obtener la URL del servicio. Asegúrate de que minikube tunnel esté corriendo o el servicio desplegado.${NC}"
-    SERVICE_URL="http://localhost:8080" # Fallback
-else
+
+# Intentar obtener URL (puede fallar en WSL/Docker driver si no hay tunnel)
+AUTO_URL=$(minikube service demo-pdb-service --url 2>/dev/null | grep "http" | head -n 1)
+
+if [ -n "$AUTO_URL" ]; then
+    SERVICE_URL="$AUTO_URL"
     echo -e "${GREEN}Servicio detectado en: $SERVICE_URL${NC}"
+else
+    echo -e "${RED}No se pudo obtener la URL automáticamente (común en WSL/Docker).${NC}"
+    echo -e "${YELLOW}Por favor, ejecuta en otra terminal:${NC}"
+    echo -e "   ${GREEN}minikube service demo-pdb-service --url${NC}"
+    echo -e "${YELLOW}Y pega la URL aquí (ej: http://127.0.0.1:39635):${NC}"
+    read -p "> " SERVICE_URL
+fi
+
+# Validar que tengamos algo
+if [ -z "$SERVICE_URL" ]; then
+    echo -e "${RED}URL no válida. Saliendo.${NC}"
+    exit 1
 fi
 
 echo ""
