@@ -233,7 +233,7 @@ READY:.status.readyReplicas \
         API_URL="$SERVICE_URL/public/hello"
     fi
     
-    API_RESPONSE=$(curl -s -w "\n%{http_code}" --connect-timeout 2 --max-time 3 "$API_URL" 2>/dev/null)
+    API_RESPONSE=$(curl -s -w "\n%{http_code}" --connect-timeout 2 --max-time 3 "$API_URL" 2>/dev/null || true)
     HTTP_CODE=$(echo "$API_RESPONSE" | tail -n1)
     API_BODY=$(echo "$API_RESPONSE" | sed '$d')
     
