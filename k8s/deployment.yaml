@@ -22,7 +22,22 @@ spec:
         app: demo-pdb
         pod: demo-pdb-pod
     spec:
-      terminationGracePeriodSeconds: 60 # Dar tiempo al preStop
+      priorityClassName: mission-critical # <--- MAGIA 1: Si falta RAM/CPU, mata a otros apps para entrar.
+      topologySpreadConstraints:          # <--- MAGIA 2: Distribución física inteligente.
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app: demo-pdb
+      affinity:                           # <--- MAGIA 3: Anti-hacinamiento.
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app: demo-pdb
+              topologyKey: kubernetes.io/hostname
+      terminationGracePeriodSeconds: 60
       containers:
         - name: demo-pdb-container
           image: demo-pdb:v1

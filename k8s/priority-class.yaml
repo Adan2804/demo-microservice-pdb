@@ -1,0 +1,7 @@
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: mission-critical
+value: 1000000
+globalDefault: false
+description: "Esta prioridad garantiza que estos pods desalojarán a otros menos importantes si falta espacio. Solo para servicios Core."
