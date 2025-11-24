@@ -4,10 +4,12 @@ metadata:
   name: demo-pdb-service
   namespace: default
 spec:
+  type: NodePort
   selector:
     pod: demo-pdb-pod
   ports:
     - protocol: TCP
       port: 80
       targetPort: 8080
+      nodePort: 30080
   type: LoadBalancer
