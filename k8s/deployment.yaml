@@ -6,6 +6,7 @@ metadata:
   labels:
     app: demo-pdb
 spec:
+  replicas: 3
   minReadySeconds: 30 # <--- NUEVO: Espera 30s después de que el pod esté Ready antes de seguir. Frena el rollout.
   strategy:
     type: RollingUpdate
