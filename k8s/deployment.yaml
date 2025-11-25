@@ -11,8 +11,8 @@ spec:
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxSurge: 1        # <--- CAMBIO: Solo 1 pod nuevo a la vez (más lento y seguro).
-      maxUnavailable: 0  # <--- CRÍTICO: Nunca bajar del 100% de capacidad.
+      maxSurge: 1 #Solo 1 pod nuevo a la vez (más lento y seguro).
+      maxUnavailable: 0 #Nunca bajar del 100% de capacidad.
   selector:
     matchLabels:
       pod: demo-pdb-pod
@@ -22,15 +22,15 @@ spec:
         app: demo-pdb
         pod: demo-pdb-pod
     spec:
-      priorityClassName: mission-critical # <--- MAGIA 1: Si falta RAM/CPU, mata a otros apps para entrar.
-      topologySpreadConstraints:          # <--- MAGIA 2: Distribución física inteligente.
+      priorityClassName: mission-critical # Si falta RAM/CPU, mata a otros apps para entrar.
+      topologySpreadConstraints: # Distribución física inteligente.
         - maxSkew: 1
           topologyKey: kubernetes.io/hostname
           whenUnsatisfiable: DoNotSchedule
           labelSelector:
             matchLabels:
               app: demo-pdb
-      affinity:                           # <--- MAGIA 3: Anti-hacinamiento (Soft).
+      affinity: # Anti-hacinamiento (Soft).
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution: # Cambiado a Preferred para que funcione en Minikube
             - weight: 100
@@ -42,7 +42,7 @@ spec:
       terminationGracePeriodSeconds: 60
       containers:
         - name: demo-pdb-container
-          image: demo-pdb:v1
+          image: demo-pdb:v2
           imagePullPolicy: Never
           ports:
             - containerPort: 8080
