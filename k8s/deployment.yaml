@@ -42,6 +42,53 @@ spec:
       terminationGracePeriodSeconds: 60
       containers:
         - name: demo-pdb-container
+          image: demo-pdb:v2
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          lifecycle: # <--- NUEVO: Graceful Shutdown real
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "sleep 30"]
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "200m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          startupProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            periodSeconds: 5
+            timeoutSeconds: 5
+  template:
+    metadata:
+      labels:
+        app: demo-pdb
+        pod: demo-pdb-pod
+    spec:
+      priorityClassName: mission-critical # Si falta RAM/CPU, mata a otros apps para entrar.
+      topologySpreadConstraints: # Distribución física inteligente.
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app: demo-pdb
+      affinity: # Anti-hacinamiento (Soft).
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution: # Cambiado a Preferred para que funcione en Minikube
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: demo-pdb
+                topologyKey: kubernetes.io/hostname
+      terminationGracePeriodSeconds: 60
+      containers:
+        - name: demo-pdb-container
           image: demo-pdb:v1
           imagePullPolicy: Never
           ports:
