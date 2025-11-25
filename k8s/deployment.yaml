@@ -7,11 +7,11 @@ metadata:
     app: demo-pdb
 spec:
   replicas: 3
-  minReadySeconds: 30 # <--- NUEVO: Espera 30s después de que el pod esté Ready antes de seguir. Frena el rollout.
+  minReadySeconds: 30
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxSurge: 1 #Solo 1 pod nuevo a la vez (más lento y seguro).
+      maxSurge: 1 #Solo 1 pod nuevo a la vez
       maxUnavailable: 0 #Nunca bajar del 100% de capacidad.
   selector:
     matchLabels:
