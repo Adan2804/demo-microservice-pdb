@@ -18,7 +18,7 @@ fi
 
 echo -e "${GREEN}Checking ArgoCD status...${NC}"
 if ! kubectl get namespace argocd > /dev/null 2>&1; then
-    echo -e "${RED}ArgoCD namespace not found!${NC}"
+    echo -e "${RED}ArgoCD is not installed!${NC}"
     exit 1
 fi
 
