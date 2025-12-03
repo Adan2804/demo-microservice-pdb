@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/Adan2804/demo-microservice-pdb.git # Reemplaza con tu repo real si es necesario, o usa path local si ArgoCD lo soporta (usualmente requiere git)
+    repoURL: https://github.com/Adan2804/demo-microservice-pdb.git
     targetRevision: HEAD
     path: k8s
   destination:

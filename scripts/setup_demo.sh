@@ -18,8 +18,16 @@ fi
 
 echo -e "${GREEN}Checking ArgoCD status...${NC}"
 if ! kubectl get namespace argocd > /dev/null 2>&1; then
-    echo -e "${RED}ArgoCD is not installed!${NC}"
-    exit 1
+    echo -e "${YELLOW}ArgoCD is not installed. Installing...${NC}"
+    kubectl create namespace argocd
+    kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+    
+    echo -e "${GREEN}Waiting for ArgoCD to be ready...${NC}"
+    kubectl wait --for=condition=Ready pods --all -n argocd --timeout=300s
+    
+    echo -e "${GREEN}ArgoCD installed successfully!${NC}"
+else
+    echo -e "${GREEN}ArgoCD is already installed.${NC}"
 fi
 
 # 2. Get Password
