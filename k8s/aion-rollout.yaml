@@ -1,0 +1,17 @@
+apiVersion: aion.flux.io/v1
+kind: AionRollout
+metadata:
+  name: demo-rollout
+  namespace: default
+spec:
+  target_ref:
+    name: demo-pdb-deployment
+    service_name: demo-pdb-service
+  strategy:
+    cost_saving: true
+    anchor_mode: true
+    anchor_retention: "24h"
+    shadow_replicas: 1 # Número de réplicas para el shadow deployment
+  preview:
+    routing_header: "x-aion-version" # Header para enrutar al shadow
+    routing_value: "v2" # Valor que debe tener el header
