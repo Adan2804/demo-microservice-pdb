@@ -32,7 +32,7 @@ spec:
               app: demo-pdb
       affinity: # Anti-hacinamiento (Soft).
         podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution: # Cambiado a Preferred para que funcione en Minikube
+          preferredDuringSchedulingIgnoredDuringExecution:
             - weight: 100
               podAffinityTerm:
                 labelSelector:
