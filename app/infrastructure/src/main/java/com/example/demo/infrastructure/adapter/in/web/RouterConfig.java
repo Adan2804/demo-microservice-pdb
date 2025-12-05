@@ -16,7 +16,7 @@ public class RouterConfig {
     @Bean
     public RouterFunction<ServerResponse> route(GreetingHandler handler) {
         return RouterFunctions
-                .route(GET("/public/hello").and(accept(MediaType.APPLICATION_JSON)), handler::hello)
-                .andRoute(GET("/secure/data").and(accept(MediaType.APPLICATION_JSON)), handler::secureData);
+                .route(GET("/public/hello"), handler::hello)
+                .andRoute(GET("/secure/data"), handler::secureData);
     }
 }
