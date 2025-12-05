@@ -42,7 +42,7 @@ spec:
       terminationGracePeriodSeconds: 60
       containers:
         - name: demo-pdb-container
-          image: demo-pdb:v2
+          image: demo-pdb:v1
           imagePullPolicy: Never
           ports:
             - containerPort: 8080
