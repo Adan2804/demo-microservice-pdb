@@ -55,8 +55,8 @@ if [ -f "$APP_YAML" ]; then
     kubectl apply -f "$APP_YAML" -n argocd
     echo "Waiting for application to be created..."
     sleep 5
-    # Force sync
-    kubectl patch application demo-microservice-pdb -n argocd --type merge -p '{"operation":{"sync":{"revision":"HEAD"}}}' 2>/dev/null || true
+    # Force ArgoCD refresh to trigger auto-sync
+    kubectl patch application demo-pdb-app -n argocd --type merge -p '{"metadata":{"annotations":{"argocd.argoproj.io/refresh":"hard"}}}' 2>/dev/null || true
 else
     echo -e "${RED}Application manifest not found at $APP_YAML${NC}"
 fi
