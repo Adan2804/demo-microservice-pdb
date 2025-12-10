@@ -55,7 +55,6 @@ if [ -f "$APP_YAML" ]; then
     kubectl apply -f "$APP_YAML" -n argocd
     echo "Waiting for application to be created..."
     sleep 5
-    # Force ArgoCD refresh to trigger auto-sync
     kubectl patch application demo-pdb-app -n argocd --type merge -p '{"metadata":{"annotations":{"argocd.argoproj.io/refresh":"hard"}}}' 2>/dev/null || true
 else
     echo -e "${RED}Application manifest not found at $APP_YAML${NC}"
@@ -74,12 +73,28 @@ kubectl port-forward svc/argocd-server -n argocd 8081:443 > /dev/null 2>&1 &
 ARGOCD_PID=$!
 sleep 3
 
-# App (Wait for it to be ready if deployed, otherwise skip)
 MICRO_PID=""
-if kubectl get svc demo-pdb-service > /dev/null 2>&1; then
-    echo "Starting App Port-Forward (8082:80)..."
-    kubectl port-forward svc/demo-pdb-service 8082:80 > /dev/null 2>&1 &
-    MICRO_PID=$!
+
+# Apply base manifests to ensure app exists even if ArgoCD points to remote repo
+kubectl apply -f ./k8s/priority-class.yaml -n default 2>/dev/null || true
+kubectl apply -f ./k8s/deployment.yaml -n default 2>/dev/null || true
+kubectl apply -f ./k8s/service.yaml -n default 2>/dev/null || true
+kubectl apply -f ./k8s/pdb.yaml -n default 2>/dev/null || true
+kubectl apply -f ./k8s/hpa.yaml -n default 2>/dev/null || true
+
+# Conditionally apply optional CRDs-based manifests
+if kubectl api-resources --api-group=aion.flux.io > /dev/null 2>&1; then
+  kubectl apply -f ./k8s/aion-rollout.yaml -n default 2>/dev/null || true
+fi
+if kubectl api-resources --api-group=networking.istio.io > /dev/null 2>&1; then
+  kubectl apply -f ./k8s/istio-routing.yaml -n default 2>/dev/null || true
+fi
+
+kubectl rollout status deploy/demo-pdb-deployment -n default --timeout=180s 2>/dev/null || true
+
+if kubectl get svc demo-pdb-service -n default > /dev/null 2>&1; then
+  kubectl port-forward svc/demo-pdb-service -n default 8082:80 > /dev/null 2>&1 &
+  MICRO_PID=$!
 fi
 
 # 5. Summary
