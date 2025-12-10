@@ -25,7 +25,8 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    - port: 80
+    - name: http
+      port: 80
       targetPort: 8080
   selector:
     app: demo-pdb
@@ -46,12 +47,17 @@ spec:
         - headers:
             x-aion-version:
               exact: v2
+          uri:
+            prefix: "/"
       route:
         - destination:
             host: demo-pdb-service-shadow
             port:
               number: 80
-    - route:
+    - match:
+        - uri:
+            prefix: "/"
+      route:
         - destination:
             host: demo-pdb-service
             port:

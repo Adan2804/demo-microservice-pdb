@@ -6,6 +6,10 @@ BLUE='\033[0;34m'
 RED='\033[0;31m'
 NC='\033[0m'
 
+# Resolve project root regardless of current working directory
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+ROOT_DIR="${SCRIPT_DIR%/scripts}"
+
 echo -e "${GREEN}🚀 SETTING UP DEMO MICROSERVICE (PDB + ARGOCD)${NC}"
 echo "=================================================="
 
@@ -43,14 +47,14 @@ fi
 # 3. Build Images
 echo -e "${GREEN}Building Docker Image v1...${NC}"
 eval $(minikube docker-env)
-docker build -t demo-pdb:v1 --build-arg APP_VERSION=v1 ./app
+docker build -t demo-pdb:v1 --build-arg APP_VERSION=v1 "${ROOT_DIR}/app"
 
 echo -e "${GREEN}Building Docker Image v2...${NC}"
-docker build -t demo-pdb:v2 --build-arg APP_VERSION=v2 ./app
+docker build -t demo-pdb:v2 --build-arg APP_VERSION=v2 "${ROOT_DIR}/app"
 
 # 4. Deploy ArgoCD App
 echo -e "${GREEN}Deploying ArgoCD Application...${NC}"
-APP_YAML="./argocd/application.yaml"
+APP_YAML="${ROOT_DIR}/argocd/application.yaml"
 if [ -f "$APP_YAML" ]; then
     kubectl apply -f "$APP_YAML" -n argocd
     echo "Waiting for application to be created..."
@@ -76,18 +80,18 @@ sleep 3
 MICRO_PID=""
 
 # Apply base manifests to ensure app exists even if ArgoCD points to remote repo
-kubectl apply -f ./k8s/priority-class.yaml -n default 2>/dev/null || true
-kubectl apply -f ./k8s/deployment.yaml -n default 2>/dev/null || true
-kubectl apply -f ./k8s/service.yaml -n default 2>/dev/null || true
-kubectl apply -f ./k8s/pdb.yaml -n default 2>/dev/null || true
-kubectl apply -f ./k8s/hpa.yaml -n default 2>/dev/null || true
+kubectl apply -f "${ROOT_DIR}/k8s/priority-class.yaml" -n default 2>/dev/null || true
+kubectl apply -f "${ROOT_DIR}/k8s/deployment.yaml" -n default 2>/dev/null || true
+kubectl apply -f "${ROOT_DIR}/k8s/service.yaml" -n default 2>/dev/null || true
+kubectl apply -f "${ROOT_DIR}/k8s/pdb.yaml" -n default 2>/dev/null || true
+kubectl apply -f "${ROOT_DIR}/k8s/hpa.yaml" -n default 2>/dev/null || true
 
 # Conditionally apply optional CRDs-based manifests
 if kubectl api-resources --api-group=aion.flux.io > /dev/null 2>&1; then
-  kubectl apply -f ./k8s/aion-rollout.yaml -n default 2>/dev/null || true
+  kubectl apply -f "${ROOT_DIR}/k8s/aion-rollout.yaml" -n default 2>/dev/null || true
 fi
 if kubectl api-resources --api-group=networking.istio.io > /dev/null 2>&1; then
-  kubectl apply -f ./k8s/istio-routing.yaml -n default 2>/dev/null || true
+  kubectl apply -f "${ROOT_DIR}/k8s/istio-routing.yaml" -n default 2>/dev/null || true
 fi
 
 kubectl rollout status deploy/demo-pdb-deployment -n default --timeout=180s 2>/dev/null || true
@@ -115,4 +119,4 @@ echo "--------------------------------------------------"
 echo "Background PIDs: ArgoCD=$ARGOCD_PID App=$MICRO_PID"
 echo "To stop port-forwards run: pkill -f 'kubectl port-forward'"
 
-kubectl apply -f ./argocd/application.yaml -n argocd
+[ -f "$APP_YAML" ] && kubectl apply -f "$APP_YAML" -n argocd || true
