@@ -84,3 +84,10 @@ else
   echo "Test shadow: curl -H 'x-aion-version: v2' http://localhost:8080/public/hello"
   echo "Tip: run 'minikube tunnel' in a separate terminal to get a stable LoadBalancer IP."
 fi
+
+echo -e "${GREEN}Enabling NGINX Ingress (alternative header routing)...${NC}"
+minikube addons enable ingress > /dev/null 2>&1 || true
+kubectl apply -f "${SCRIPT_DIR}/../k8s/nginx-ingress.yaml" -n default
+echo "Use single URL with Host header:"
+echo "curl -H 'Host: aion.local' http://$(minikube ip)/public/hello"
+echo "curl -H 'Host: aion.local' -H 'x-aion-version: v2' http://$(minikube ip)/public/hello"
