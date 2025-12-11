@@ -1,0 +1,19 @@
+apiVersion: aion.flux.io/v1
+kind: AionRollout
+metadata:
+  name: demo-pdb-rollout
+  namespace: default
+spec:
+  target_ref:
+    name: demo-pdb-deployment
+    namespace: default
+  new_image: "demo-pdb:v2"
+  strategy:
+    cost_saving: true
+    anchor_mode: true
+  safety_checks:
+    - criteria:
+        - source:
+            Prometheus: "http://prometheus-server.monitoring.svc.cluster.local:9090"
+          operator: "<"
+          threshold: 70.0

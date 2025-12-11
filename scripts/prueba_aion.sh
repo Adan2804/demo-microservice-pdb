@@ -87,6 +87,13 @@ fi
 
 echo -e "${GREEN}Enabling NGINX Ingress (alternative header routing)...${NC}"
 minikube addons enable ingress > /dev/null 2>&1 || true
+kubectl -n ingress-nginx rollout status deploy/ingress-nginx-controller --timeout=240s || true
+for i in {1..20}; do
+  if kubectl -n ingress-nginx get svc ingress-nginx-controller-admission > /dev/null 2>&1; then
+    break
+  fi
+  sleep 5
+done
 kubectl apply -f "${SCRIPT_DIR}/../k8s/nginx-ingress.yaml" -n default
 echo "Use single URL with Host header:"
 echo "curl -H 'Host: aion.local' http://$(minikube ip)/public/hello"
