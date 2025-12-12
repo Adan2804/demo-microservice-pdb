@@ -2,14 +2,10 @@ apiVersion: v1
 kind: Service
 metadata:
   name: demo-pdb-service
-  namespace: default
 spec:
-  type: NodePort
   selector:
-    pod: demo-pdb-pod
+    pod: demo-pdb-pod # Esto atrapa TANTO a Anchor como a Shadow. ¡Correcto!
   ports:
     - name: http
-      protocol: TCP
       port: 80
-      targetPort: 8080
-      nodePort: 30080
+      targetPort: 8080 # Puerto de Spring Boot

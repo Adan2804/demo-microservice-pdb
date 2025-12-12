@@ -5,28 +5,40 @@ metadata:
   namespace: default
 spec:
   hosts:
-    - "*"
+  - "*"
   gateways:
-    - demo-pdb-gateway
+  - demo-pdb-gateway
   http:
-    - match:
-        - headers:
-            x-aion-preview:
-              exact: "true"
-          uri:
-            prefix: /public
-      route:
-        - destination:
-            host: demo-pdb-service.default.svc.cluster.local
-            subset: shadow
-            port:
-              number: 80
-    - match:
-        - uri:
-            prefix: /public
-      route:
-        - destination:
-            host: demo-pdb-service.default.svc.cluster.local
-            subset: anchor
-            port:
-              number: 80
+  # REGLA 1: Tráfico Shadow (Si tiene el Header)
+  - match:
+    - headers:
+        x-aion-preview:
+          exact: "true"
+      uri:
+        prefix: /public
+    route:
+    - destination:
+        host: demo-pdb-service.default.svc.cluster.local
+        subset: shadow
+        port:
+          number: 80
+      headers:
+        request:
+          set:
+            # Truco para que Spring Boot no rechace la petición
+            Host: demo-pdb-service.default.svc.cluster.local
+  
+  # REGLA 2: Tráfico Anchor (Por defecto)
+  - match:
+    - uri:
+        prefix: /public
+    route:
+    - destination:
+        host: demo-pdb-service.default.svc.cluster.local
+        subset: anchor
+        port:
+          number: 80
+      headers:
+        request:
+          set:
+            Host: demo-pdb-service.default.svc.cluster.local

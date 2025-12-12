@@ -47,10 +47,10 @@ fi
 # 3. Build Images
 echo -e "${GREEN}Building Docker Image v1...${NC}"
 eval $(minikube docker-env)
-docker build -t demo-pdb:v1 --build-arg APP_VERSION=v1 "${ROOT_DIR}/app"
+docker build --no-cache -t demo-pdb:v1 --build-arg APP_VERSION=v1 "${ROOT_DIR}/app"
 
 echo -e "${GREEN}Building Docker Image v2...${NC}"
-docker build -t demo-pdb:v2 --build-arg APP_VERSION=v2 "${ROOT_DIR}/app"
+docker build --no-cache -t demo-pdb:v2 --build-arg APP_VERSION=v2 "${ROOT_DIR}/app"
 
 # 4. Deploy ArgoCD App
 echo -e "${GREEN}Deploying ArgoCD Application...${NC}"
