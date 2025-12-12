@@ -10,6 +10,17 @@ spec:
     - demo-pdb-gateway
   http:
     - match:
+        - headers:
+            x-aion-preview:
+              exact: "true"
+          uri:
+            prefix: /public
+      route:
+        - destination:
+            host: demo-pdb-shadow-service.default.svc.cluster.local
+            port:
+              number: 80
+    - match:
         - uri:
             prefix: /public
       route:
