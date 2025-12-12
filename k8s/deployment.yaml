@@ -21,6 +21,7 @@ spec:
       labels:
         app: demo-pdb
         pod: demo-pdb-pod
+        aion-version: anchor
     spec:
       priorityClassName: mission-critical # Si falta RAM/CPU, mata a otros apps para entrar.
       topologySpreadConstraints: # Distribución física inteligente.
