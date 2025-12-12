@@ -2,7 +2,8 @@
 FROM gradle:8.8-jdk21-alpine AS build
 WORKDIR /app
 COPY . .
-RUN gradle :infrastructure:bootJar --no-daemon -x test
+# Ensure a fresh build so new controllers are included
+RUN gradle clean :infrastructure:bootJar --no-daemon -x test
 
 # Run stage
 FROM eclipse-temurin:21-jre-alpine
