@@ -15,6 +15,8 @@ spec:
               exact: "true"
           uri:
             prefix: /public
+      rewrite:
+        uri: /public/hello
       route:
         - destination:
             host: demo-pdb-shadow-service.default.svc.cluster.local
@@ -23,6 +25,18 @@ spec:
     - match:
         - uri:
             prefix: /public
+      rewrite:
+        uri: /public/hello
+      route:
+        - destination:
+            host: demo-pdb-service.default.svc.cluster.local
+            port:
+              number: 80
+    - match:
+        - uri:
+            prefix: /
+      rewrite:
+        uri: /public/hello
       route:
         - destination:
             host: demo-pdb-service.default.svc.cluster.local
