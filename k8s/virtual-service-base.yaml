@@ -9,9 +9,11 @@ spec:
   gateways:
     - demo-pdb-gateway
   http:
-    - route:
+    - match:
+        - uri:
+            prefix: /public
+      route:
         - destination:
-            host: demo-pdb-service
-            subset: anchor
+            host: demo-pdb-service.default.svc.cluster.local
             port:
               number: 80

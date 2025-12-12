@@ -13,13 +13,18 @@ spec:
         - headers:
             x-aion-preview:
               exact: "true"
+          uri:
+            prefix: /public
       route:
         - destination:
-            host: demo-pdb-shadow-service
+            host: demo-pdb-shadow-service.default.svc.cluster.local
             port:
               number: 80
-    - route:
+    - match:
+        - uri:
+            prefix: /public
+      route:
         - destination:
-            host: demo-pdb-service
+            host: demo-pdb-service.default.svc.cluster.local
             port:
               number: 80
