@@ -21,4 +21,9 @@ public class PublicController {
     public Mono<Greeting> hello() {
         return greetingService.getPublicGreeting();
     }
+
+    @GetMapping
+    public Mono<Greeting> root() {
+        return greetingService.getPublicGreeting();
+    }
 }

@@ -7,7 +7,6 @@ spec:
   type: NodePort
   selector:
     pod: demo-pdb-pod
-    aion-version: anchor
   ports:
     - name: http
       protocol: TCP
