@@ -1,0 +1,25 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: demo-pdb-preview-vs
+  namespace: default
+spec:
+  hosts:
+    - "*"
+  gateways:
+    - demo-pdb-gateway
+  http:
+    - match:
+        - headers:
+            x-aion-preview:
+              exact: "true"
+      route:
+        - destination:
+            host: demo-pdb-shadow-service
+            port:
+              number: 80
+    - route:
+        - destination:
+            host: demo-pdb-service
+            port:
+              number: 80

@@ -12,5 +12,6 @@ spec:
     - route:
         - destination:
             host: demo-pdb-service
+            subset: anchor
             port:
               number: 80
