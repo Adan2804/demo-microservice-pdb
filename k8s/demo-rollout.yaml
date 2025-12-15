@@ -1,0 +1,12 @@
+apiVersion: aion.flux.io/v1
+kind: AionRollout
+metadata:
+  name: demo-pdb-rollout
+spec:
+  serviceName: demo-pdb-service
+  image: demo-pdb:v2
+  containerPort: 8080
+  servicePort: 80
+  previewHeader: x-aion-preview
+  previewValue: "true"
+  replicas: 1
