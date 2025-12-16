@@ -4,7 +4,7 @@ metadata:
   name: demo-pdb-deployment
   namespace: default
   labels:
-    app: demo-pdb
+    app: demo-pdb-service
 spec:
   replicas: 3
   minReadySeconds: 30
@@ -19,7 +19,7 @@ spec:
   template:
     metadata:
       labels:
-        app: demo-pdb
+        app: demo-pdb-service
         pod: demo-pdb-pod
         aion-version: anchor
     spec:
@@ -42,11 +42,14 @@ spec:
                 topologyKey: kubernetes.io/hostname
       terminationGracePeriodSeconds: 60
       containers:
-        - name: demo-pdb-container
+        - name: app
           image: demo-pdb:v1
           imagePullPolicy: Never
           ports:
             - containerPort: 8080
+          env:
+            - name: APP_VERSION
+              value: "v1"
           lifecycle: # Graceful Shutdown real
             preStop:
               exec:
