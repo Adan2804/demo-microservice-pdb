@@ -4,7 +4,7 @@ metadata:
   name: demo-pdb-pdb
   namespace: default
 spec:
-  minAvailable: 2
+  minAvailable: 3
   selector:
     matchLabels:
       pod: demo-pdb-pod
