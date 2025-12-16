@@ -47,6 +47,14 @@ spec:
                   type: integer
                   format: int32
                   description: "Number of replicas for the deployment"
+                migrationState:
+                  type: string
+                  description: "Replica-based migration state"
+                  enum:
+                    - Shadow
+                    - Merging
+                    - Rebalancing
+                    - Promoted
               required:
                 - serviceName
                 - image

@@ -10,3 +10,4 @@ spec:
   previewHeader: x-aion-preview
   previewValue: "true"
   replicas: 1
+  migrationState: Shadow
