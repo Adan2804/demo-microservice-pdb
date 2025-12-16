@@ -2,6 +2,11 @@ apiVersion: aion.flux.io/v1
 kind: AionRollout
 metadata:
   name: demo-pdb-rollout
+  annotations:
+    argocd.argoproj.io/ignore-differences: |
+      jsonPointers:
+        - /spec/migrationState
+        - /spec/replicas
 spec:
   serviceName: demo-pdb-service
   image: demo-pdb:v2
