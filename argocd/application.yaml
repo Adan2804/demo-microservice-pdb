@@ -15,6 +15,12 @@ spec:
   ignoreDifferences:
     - group: aion.flux.io
       kind: AionRollout
+      namespace: default
+      jqPathExpressions:
+        - .spec.migrationState
+        - .spec.replicas
+    - group: aion.flux.io
+      kind: AionRollout
       name: demo-pdb-rollout
       namespace: default
       jsonPointers:
@@ -23,7 +29,7 @@ spec:
   syncPolicy:
     automated:
       prune: true
-      selfHeal: true
+      selfHeal: false
     syncOptions:
       - CreateNamespace=true
       - RespectIgnoreDifferences=true
