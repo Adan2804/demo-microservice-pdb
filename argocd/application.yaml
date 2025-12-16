@@ -16,6 +16,7 @@ spec:
     - group: aion.flux.io
       kind: AionRollout
       name: demo-pdb-rollout
+      namespace: default
       jsonPointers:
         - /spec/migrationState
         - /spec/replicas
