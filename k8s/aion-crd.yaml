@@ -54,6 +54,7 @@ spec:
                     - Shadow
                     - Merging
                     - Rebalancing
+                    - Finalizing
                     - Promoted
               required:
                 - serviceName
