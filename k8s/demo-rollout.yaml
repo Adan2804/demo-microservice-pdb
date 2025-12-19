@@ -16,3 +16,6 @@ spec:
   previewValue: "true"
   replicas: 1
   migrationState: Shadow
+  chaos:
+    delayMs: 2000
+    abortPercent: 0
