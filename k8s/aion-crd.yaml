@@ -56,6 +56,23 @@ spec:
                     - Rebalancing
                     - Finalizing
                     - Promoted
+                
+                # --- NUEVA SECCIÓN: EVOLUCIÓN 8 (CHAOS) ---
+                chaos:
+                  type: object
+                  description: "Chaos Engineering specs for Shadow phase"
+                  nullable: true
+                  properties:
+                    delay_ms:
+                      type: integer
+                      format: int64
+                      description: "Inject latency in milliseconds (e.g. 2000)"
+                    abort_percent:
+                      type: integer
+                      format: int32
+                      description: "Percentage of requests to fail with 500 error (0-100)"
+                # ------------------------------------------
+
               required:
                 - serviceName
                 - image
@@ -97,3 +114,6 @@ spec:
         - name: Phase
           type: string
           jsonPath: .status.phase
+        - name: State
+          type: string
+          jsonPath: .spec.migrationState
